@@ -1,3 +1,4 @@
+package com.weasley.store;
 public class Customer extends java.lang.Object {
 	// DB-assigned primary key
 	private Long customerId = -1L; // "Long" 64-bit integer

@@ -1,3 +1,4 @@
+package com.weasley.store;
 
  /*
   * High Networth Individual

@@ -1,3 +1,4 @@
+package com.weasley.store;
 import java.util.HashMap;
 
 public class WeasleyApp1 {
