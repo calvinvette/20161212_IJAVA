@@ -2,6 +2,8 @@ public class Customer extends java.lang.Object {
 	// DB-assigned primary key
 	private Long customerId = -1L; // "Long" 64-bit integer
 
+//	@Size(min=2, max=12)
+//	@Pattern(regexp="[A-Za-z0-9\\-\\']*")
 	private String firstName = "";
 	private String lastName;
 	// private String firstName, lastName;
@@ -23,20 +25,50 @@ public class Customer extends java.lang.Object {
 	private boolean active;
 
 	public Customer() {
+		super();
 		System.out.println("No-Arg CTOR");
 	}
 	
 	public Customer(String firstName, String lastName) {
+		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
-	
+
+	public Customer(String firstName, String lastName, String fullName, String taxId, String email, String phoneNumber,
+			String title, boolean active) {
+		super(); // parent(Object)  no-arg ctor ie: Object()
+//		this.firstName = firstName;
+		setFirstName(firstName);
+		this.lastName = lastName;
+		this.fullName = fullName;
+		this.taxId = taxId;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.title = title;
+		this.active = active;
+	}
+
+	public Customer(Long customerId, String firstName, String lastName, String fullName, String taxId, String email,
+			String phoneNumber, String title, boolean active) {
+		super();
+		this.customerId = customerId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.fullName = fullName;
+		this.taxId = taxId;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.title = title;
+		this.active = active;
+	}
+
 	
 	// Encapsulation - getters and setters
 	// Used to protect the private instance variables and enforce business rules
 	// and data integrity
 	
-	
+
 
 	public String getTitle() {
 		return title;

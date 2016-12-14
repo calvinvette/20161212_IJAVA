@@ -16,16 +16,24 @@ public class WeasleyApp1 {
 		
 		
 		
-		Customer harry = new Customer(); // Java CLASSPATH must have
+		Customer harry = 
+//				new Customer("Harry", "Potter");
+				new HNICustomer("Harry", "Potter", 4, "Gringott's"); // Java CLASSPATH must have
 											// Customer.class in it to run this
 											// program
-		harry.setFirstName("Harry");
-		harry.setLastName("Potter");
+		//if (harry instanceof HNICustomer) {
+			HNICustomer hniHarry = (HNICustomer) harry;
+			System.out.println("Your manager is: " + hniHarry.getAccountManager());
+		//}
+		
+		
+//		harry.setFirstName("Harry");
+//		harry.setLastName("Potter");
 		harry.setPhoneNumber("+44 0206 510-1855");
 		harry.setEmail("harry@hogwarts.ac.uk");
 //		welcome(harry);
 		
-//		System.out.println(harry.toString());
+		System.out.println(harry.toString());
 		
 
 		Customer hermione = new Customer();
