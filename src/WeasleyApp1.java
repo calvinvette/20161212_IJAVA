@@ -1,5 +1,21 @@
+import java.util.HashMap;
+
 public class WeasleyApp1 {
 	public static void main(String[] args) {
+//		String result ="foo" + "bar";
+//		System.out.println("Result: " + result);
+//		System.out.println("foo" == "foo");
+//		System.out.println(new String("foo") == new String("foo"));
+//		System.out.println(new String("foo") =="foo");
+//		System.out.println("foo".equals("foo"));
+//		System.out.println(new String("foo").equals("foo"));
+//		System.out.println(new String("foo").equals("FOO"));
+//		System.out.println(new String("foo").equalsIgnoreCase("FOO"));
+//		System.out.println(new String("foo").toLowerCase().equals("FOO".toLowerCase()));
+//		System.out.println("  	foo      ".toLowerCase().toUpperCase().trim().replaceAll("^(.*)$", "\"$1\","));
+		
+		
+		
 		Customer harry = new Customer(); // Java CLASSPATH must have
 											// Customer.class in it to run this
 											// program
@@ -7,17 +23,46 @@ public class WeasleyApp1 {
 		harry.setLastName("Potter");
 		harry.setPhoneNumber("+44 0206 510-1855");
 		harry.setEmail("harry@hogwarts.ac.uk");
+//		welcome(harry);
+		
+//		System.out.println(harry.toString());
+		
 
 		Customer hermione = new Customer();
 		hermione.setFirstName("Hermione");
 		hermione.setLastName("Granger");
 		hermione.setEmail("hermione@hogwarts.ac.uk");
+		
+//		System.out.println(hermione);
 
 		Customer ron = new Customer();
 		ron.setFirstName("Ronald");
 		ron.setLastName("Weasley");
 		ron.setEmail("ron@hogwarts.ac.uk");
+		
+//		System.out.println(ron);
+		
+		Object[] myStuff = {
+				ron,
+				hermione,
+				harry,
+				new Long(234235234L),
+				"Arbitrary String",
+				new HashMap<Long, Customer>(){{
+					put(1234L, harry);
+					put(4548L, ron);
+					put(4949L, hermione);
+				}}
+		};
+		
+		for (Object o : myStuff) {
+			System.out.println(o);
+		}
+		
 
+		System.exit(0);
+
+		
 		//
 		// float pi = 3.14159265F;
 		// long avo = 6022339184252485L;
@@ -148,31 +193,51 @@ public class WeasleyApp1 {
 		}; // literal string array sized & populated
 		Customer[] importedCusts = new Customer[lines.length];
 		int lineNumber = 0;
-		for (String line : lines) {
-			int nextTab = 0;
-			nextTab = line.indexOf('\t', nextTab + 1);
-			String[] fields = new String[6];
-			int fieldCounter = 0;
-			int currentPosition = 0;
-			while (nextTab >= 0) {
-				fields[fieldCounter] = line.substring(currentPosition, nextTab);
-				currentPosition = nextTab + 1;
-				nextTab = line.indexOf('\t', nextTab + 1);
-				fieldCounter++;
-			}
-			fields[fieldCounter] = line.substring(currentPosition); // without endPosition, take to the end of line
-//			System.out.println("*** Fields ***");
-//			for(String field : fields) {
-//				System.out.println(field);
+//		for (String line : lines) {
+//			int nextTab = 0;
+//			nextTab = line.indexOf('\t', nextTab + 1);
+//			String[] fields = new String[6];
+//			int fieldCounter = 0;
+//			int currentPosition = 0;
+//			while (nextTab >= 0) {
+//				fields[fieldCounter] = line.substring(currentPosition, nextTab);
+//				currentPosition = nextTab + 1;
+//				nextTab = line.indexOf('\t', nextTab + 1);
+//				fieldCounter++;
 //			}
-			importedCusts[lineNumber] = new Customer();
-			importedCusts[lineNumber].setFirstName(fields[1]);
-			importedCusts[lineNumber++].setLastName(fields[2]);
+//			fields[fieldCounter] = line.substring(currentPosition); // without endPosition, take to the end of line
+////			System.out.println("*** Fields ***");
+////			for(String field : fields) {
+////				System.out.println(field);
+////			}
+//			importedCusts[lineNumber] = new Customer();
+//			importedCusts[lineNumber].setFirstName(fields[1]);
+//			importedCusts[lineNumber++].setLastName(fields[2]);
+//		}
+		
+		for (String line : lines) {
+			String[] fields = line.split("\t");
+			importedCusts[lineNumber++] = new Customer(fields[1], fields[2]);
+//			importedCusts[lineNumber] = new Customer();
+//			importedCusts[lineNumber].setFirstName(fields[1]);
+//			importedCusts[lineNumber].setLastName(fields[2]);		
+//			lineNumber++;
 		}
+//		if (importedCusts[lineNumber] != null && 
+//				importedCusts[lineNumber].getFirstName().matches("/draco/i") && 
+//				importedCusts[lineNumber].getLastName().matches("/Malfoy/i")) {
+//			System.out.println("REGEX: Draco Malfoy has been banned from Weasley's Wizarding Wheezes.");
+//		} else {
+//			System.out.println("Customer approved.");
+//		}
 			
 		for(Customer c : importedCusts) {
 			welcome(c);
 		}
+		
+//		for (Customer c : importedCusts) {
+//			System.out.println("");
+//		}
 		
 //		1
 //		Harry
@@ -283,8 +348,22 @@ public class WeasleyApp1 {
 		System.out.println("Done...");
 	}
 
+	// unary operators (1 operand): c++, c--, 
+	// binary operators (2 operands): a + b, a / b, a * b, c+=7 (c = c+7)
+	// ternary operator: (boolean) ? if_true : if_false
+	// conditional operator
 	private static void welcome(Customer c) {
-		System.out.println("Welcome to Weasley's Wizarding Wheezes, " + c.getFirstName() + " " + c.getLastName());
+		System.out.println("Welcome to Weasley's Wizarding Wheezes, " 
+				+ (
+						// make sure we have a non-empty value for firstName
+						((c.getFirstName() != null) && (c.getFirstName().length() > 0))
+						// if so, print it and a space
+						? c.getFirstName() + " " 
+						// otherwise, neutral title
+						// : "Mr./Ms." )
+						// otherwise, empty string
+						: "")
+				+ c.getLastName());
 	}
 	//
 	// private static void welcome(Customer c1, Customer c2) {
