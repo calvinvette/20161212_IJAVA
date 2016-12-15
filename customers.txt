@@ -1,0 +1,27 @@
+customerId	firstName	lastName	phoneNumber	homeAddress	workAddress
+1	Harry	Potter	+44 0206 987-1234	2	1
+2	Ron	Weasley	+44 0206 987-1143	4	3
+3	Hermione	Granger	+44 0206 987-6631	NULL	5
+4	Neville	Longbottom	+44 0206 987-5151	NULL	6
+5	Dean	Thomas	+44 0206 987-5157	NULL	7
+6	Seamus	Finnigan	+44 0206 987-7467	NULL	8
+7	Ginny	Weasley	+44 0206 987-2728	10	9
+8	Lee	Jordan	+44 0206 987-9713	NULL	11
+9	Fred	Weasley	+44 0206 987-3971	13	12
+10	George	Weasley	+44 0206 987-6431	15	14
+11	Cho	Chang	+44 0206 987-1793	NULL	16
+12	Luna	Lovegood	+44 0206 987-7867	NULL	NULL
+13	Parvati	Patil	+44 0206 987-2345	NULL	NULL
+14	Padma	Patil	+44 0206 413-5903	NULL	NULL
+15	Draco	Malfoy	+44 0206 987-2216	NULL	NULL
+16	Vincent	Crabbe	+44 0206 987-9438	NULL	NULL
+17	Gregory	Goyle	+44 0206 987-1178	NULL	NULL
+18	Penelope	Clearwater	+44 0206 987-9392	NULL	NULL
+19	Justin	Finch-Fletchley	+44 0206 987-1190	NULL	NULL
+20	Ernie	Macmillan	+44 0206 987-1059	NULL	NULL
+21	Cedric	Diggory	+44 0206 987-7715	NULL	NULL
+22	Millicent	Bulstrode	+44 0206 987-4324	NULL	NULL
+23	Hanna	Abbott	+44 0206 987-4300	NULL	NULL
+24	Susan	Bones	+44 0206 987-6544	NULL	NULL
+25	Fleur	Delacour	+44 0206 987-9304	NULL	NULL
+26	Viktor	Krum	+44 0206 987-6317	NULL	NULL
