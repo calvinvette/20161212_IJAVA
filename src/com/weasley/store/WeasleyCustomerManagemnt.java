@@ -1,5 +1,6 @@
 package com.weasley.store;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -8,18 +9,38 @@ public class WeasleyCustomerManagemnt {
 
 	public static void main(String[] args) {
 		CustomerDAO dao = new CustomerMockDAO(); // TODO - figure out how to do this...
-		Customer[] customers = importCustomers();
+//		Customer[] customers = importCustomers();
+		List<Customer> customers = importCustomers();
 		for(Customer c: customers) {
 			dao.insert(c);
 		}
-		while (true) {
+		boolean done = false;
+		boolean stillGoing = true;
+//		while (!done) {
+		while (stillGoing) {
 			String lastName = JOptionPane.showInputDialog("Find By LastName: ");
+			if (lastName == null || lastName.trim().equals("")) {
+//				System.exit(0);
+				done = true;
+				stillGoing = false;
+				continue;
+			}
 			List<Customer> results = dao.findByLastName(lastName);
-			System.out.println(results);
+//			System.out.println(results);
+			for(Customer c : results) {
+				System.out.println(c);
+			}
 		}
+		System.out.println("Thanks for playing!");
+//		done = false;
+//		if (done)
+//			System.out.println("foo");
+//			System.out.println("bar");
+//			
+//		System.out.println("Absolutely done...");
 	}
 
-	public static Customer[] importCustomers() {
+	public static /* Customer[] */ List<Customer> importCustomers() {
 		String[] lines = {
 				"1	Harry	Potter	+44 0206 987-1234	2	1",
 				"2	Ron	Weasley	+44 0206 987-1143	4	3",
@@ -48,11 +69,13 @@ public class WeasleyCustomerManagemnt {
 				"25	Fleur	Delacour	+44 0206 987-9304	NULL	NULL",
 				"26	Viktor	Krum	+44 0206 987-6317	NULL	NULL"
 		}; // literal string array sized & populated
-		Customer[] importedCusts = new Customer[lines.length];
-		int lineNumber = 0;
+//		Customer[] importedCusts = new Customer[lines.length];
+		List<Customer> importedCusts = new ArrayList<>();
+//		int lineNumber = 0;
 		for (String line : lines) {
 			String[] fields = line.split("\t");
-			importedCusts[lineNumber++] = new Customer(fields[1], fields[2]);
+			importedCusts.add(new Customer(fields[1], fields[2]));
+//			importedCusts[lineNumber++] = new Customer(fields[1], fields[2]);
 		}
 		return importedCusts;
 	}
