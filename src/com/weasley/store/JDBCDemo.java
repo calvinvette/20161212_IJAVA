@@ -19,39 +19,9 @@ public class JDBCDemo {
 			Class.forName("org.apache.derby.jdbc.ClientDriver"); // Vendor-specific class name to be dynamically loaded
 			conn = DriverManager.getConnection("jdbc:derby://localhost:1527/weasley;create=true");
 			stmt = conn.createStatement();
-			try {
-				stmt.execute("CREATE TABLE customer ("
-						+ "customerId INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,"
-						+ "firstName VARCHAR(24),"
-						+ "lastName VARCHAR(24),"
-						+ "phoneNumber VARCHAR(24),"
-						+ "email VARCHAR(24)"
-						+ ")");
-			} catch (Exception e) {
-				System.out.println("customer table already existed...");
-			}
-			for(Customer importedCust : imported) {
-				stmt.execute("INSERT INTO customer (firstName, lastName, phoneNumber) VALUES ('"
-							+ importedCust.getFirstName() + "', '" 
-							+ importedCust.getLastName() + "', '"
-							+ importedCust.getPhoneNumber() + "')");
-			}
-			
-			
-			ResultSet rs = stmt.executeQuery("SELECT * FROM customer");
-			while (rs.next()) {
-				Long customerId = rs.getLong("customerId");
-				String firstName = rs.getString("firstName");
-				String lastName = rs.getString("lastName");
-				String phoneNumber = rs.getString("phoneNumber");
-				String email = rs.getString("email");
-				Customer c = new Customer(firstName, lastName);
-				c.setCustomerId(customerId);
-				c.setPhoneNumber(phoneNumber);
-				c.setEmail(email);
-				customers.add(c);
-			}
-			rs.close();
+			createTable(stmt);
+			populateTable(imported, stmt);
+			findAll(stmt, customers);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,6 +52,46 @@ public class JDBCDemo {
 			System.out.println(c);
 		}
 
+	}
+
+	public static void findAll(Statement stmt, List<Customer> customers) throws SQLException {
+		ResultSet rs = stmt.executeQuery("SELECT * FROM customer");
+		while (rs.next()) {
+			Long customerId = rs.getLong("customerId");
+			String firstName = rs.getString("firstName");
+			String lastName = rs.getString("lastName");
+			String phoneNumber = rs.getString("phoneNumber");
+			String email = rs.getString("email");
+			Customer c = new Customer(firstName, lastName);
+			c.setCustomerId(customerId);
+			c.setPhoneNumber(phoneNumber);
+			c.setEmail(email);
+			customers.add(c);
+		}
+		rs.close();
+	}
+
+	public static void populateTable(List<Customer> imported, Statement stmt) throws SQLException {
+		for(Customer importedCust : imported) {
+			stmt.execute("INSERT INTO customer (firstName, lastName, phoneNumber) VALUES ('"
+						+ importedCust.getFirstName() + "', '" 
+						+ importedCust.getLastName() + "', '"
+						+ importedCust.getPhoneNumber() + "')");
+		}
+	}
+
+	public static void createTable(Statement stmt) {
+		try {
+			stmt.execute("CREATE TABLE customer ("
+					+ "customerId INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,"
+					+ "firstName VARCHAR(24),"
+					+ "lastName VARCHAR(24),"
+					+ "phoneNumber VARCHAR(24),"
+					+ "email VARCHAR(24)"
+					+ ")");
+		} catch (Exception e) {
+			System.out.println("customer table already existed...");
+		}
 	}
 
 }

@@ -1,6 +1,9 @@
 package com.weasley.store;
+
+//@Entity
 public class Customer extends java.lang.Object {
 	// DB-assigned primary key
+//	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long customerId = -1L; // "Long" 64-bit integer
 
 //	@Size(min=2, max=12)
