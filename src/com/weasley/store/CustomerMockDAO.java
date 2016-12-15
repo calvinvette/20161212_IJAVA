@@ -1,5 +1,11 @@
 package com.weasley.store;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,10 +13,38 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 public class CustomerMockDAO implements CustomerDAO {
-	private Map<Long, Customer> customersById = new HashMap<>();
-	private Map<String, List<Customer>> customersByLastName = new HashMap<>();
-	private Map<String, List<Customer>> customersByEmail = new HashMap<>();
+	private static Map<Long, Customer> customersById = new HashMap<>();
+	private static Map<String, List<Customer>> customersByLastName = new HashMap<>();
+	private static Map<String, List<Customer>> customersByEmail = new HashMap<>();
 	private static long lastCustomerId = 0;
+	
+	public static List<Customer> importCustomers() {
+		List<Customer> importedCusts = new ArrayList<>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(new File("customers.txt")));
+			String line;
+			br.readLine(); // throw away the first line - it's the header row...
+			while ((line = br.readLine()) != null) {
+					String[] fields = line.split("\t");
+					Customer c = new Customer(fields[1], fields[2]);
+					c.setPhoneNumber(fields[3]);
+					importedCusts.add(c);
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return importedCusts;
+	}
+	
+	static {
+		CustomerMockDAO dao = new CustomerMockDAO();
+		for (Customer c : importCustomers()) {
+			dao.insert(c);
+		}
+	}
 	
 	@Override
 	public Customer insert(Customer c) {
@@ -33,13 +67,11 @@ public class CustomerMockDAO implements CustomerDAO {
 
 	@Override
 	public Customer delete(Customer c) {
-		// TODO - update indexes for customersByEmail and customersByLastName
 		return customersById.remove(c.getCustomerId());
 	}
 
 	@Override
 	public Customer update(Customer c) {
-		// TODO - update indexes for customersByEmail and customersByLastName
 		return customersById.put(c.getCustomerId(), c);
 	}
 
@@ -55,25 +87,11 @@ public class CustomerMockDAO implements CustomerDAO {
 
 	@Override
 	public List<Customer> findByLastName(String lastName) {
-//		List<Customer> results = new Vector<>();
-//		for (Customer c : findAll()) {
-//			if (c.getLastName().equalsIgnoreCase(lastName)) {
-//				results.add(c);
-//			}
-//		}
-//  		return results;
 		return customersByLastName.get(lastName);
 	}
 
 	@Override
 	public List<Customer> findByEmail(String email) {
-//		List<Customer> results = new Vector<>();
-//		for (Customer c : findAll()) {
-//			if (c.getEmail().equalsIgnoreCase(email)) {
-//				results.add(c);
-//			}
-//		}
-//		return results;
 		return customersByEmail.get(email);
 	}
 
