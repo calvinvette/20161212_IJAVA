@@ -15,7 +15,15 @@ import javax.swing.JOptionPane;
 public class WeasleyCustomerManagement {
 
 	public static void main(String[] args) {
-		CustomerDAO dao = new CustomerMockDAO(); 
+		CustomerDAO dao = null;
+		String backend = JOptionPane.showInputDialog("Which backend - (m) for mock or (j) for jdbc/derby (start server first!)");
+		if (backend.equalsIgnoreCase("j") || backend.equalsIgnoreCase("jdbc")) {
+			System.out.println("Using JDBC backend - make sure you've started the derby database ($JAVA_HOME/db/bin/startNetworkServer)");
+			dao = new CustomerJDBCDAO(); 
+		} else {
+			System.out.println("Using Mock backend - changes to the data will not be persisted.");
+			dao = new CustomerMockDAO();
+		}
 		List<Customer> customers = dao.findAll();
 		boolean done = false;
 		while (!done) {

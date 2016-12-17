@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Vector;
 
-public class JDBCDemo {
+public class CustomerJDBCDAO implements CustomerDAO {
 	private static Connection conn = null;
 	private static PreparedStatement insertStatement;
 	private static PreparedStatement updateStatement;
@@ -17,17 +17,11 @@ public class JDBCDemo {
 	private static PreparedStatement findByIdStatement;
 	private static PreparedStatement findByLastNameStatement;
 	private static PreparedStatement findByEmailStatement;
+	private static PreparedStatement findAllStatement;
 
-	public static void main(String[] args) {
-		Statement stmt = null;
-		List<Customer> customers = new Vector<>();
+	static {
 		try {
-			Class.forName("org.apache.derby.jdbc.ClientDriver"); // Vendor-specific
-																	// class
-																	// name to
-																	// be
-																	// dynamically
-																	// loaded
+			Class.forName("org.apache.derby.jdbc.ClientDriver");
 			conn = DriverManager.getConnection("jdbc:derby://localhost:1527/weasley;create=true");
 			insertStatement = conn.prepareStatement(
 					"INSERT INTO customer (firstName, lastName, phoneNumber) VALUES (?, ?, ?)",
@@ -38,76 +32,48 @@ public class JDBCDemo {
 			findByIdStatement = conn.prepareStatement("SELECT * FROM CUSTOMER WHERE customerId = ?");
 			findByLastNameStatement = conn.prepareStatement("SELECT * FROM CUSTOMER WHERE lastName LIKE ?");
 			findByEmailStatement = conn.prepareStatement("SELECT * FROM CUSTOMER WHERE email = ?");
-			stmt = conn.createStatement();
-			dropTable(stmt);
-			createTable(stmt);
-			populateTable(ImportCustomerFile.importCustomers());
-			System.out.println("**** Find By ID");
-			Customer ginny = findById(stmt, 7L);
-			System.out.println(ginny);
-			System.out.println("**** Updating");
-			String ginnyEmail = "ginny@hogwarts.ac.uk";
-			ginny.setFirstName("Ginevra");
-			ginny.setLastName("Weasley-Potter");
-			ginny.setEmail(ginnyEmail);
-			System.out.println(ginny);
-			updateCustomer(ginny);
-			System.out.println("**** Find by Id again");
-			ginny = findById(stmt, 7L);
-			System.out.println(ginny);
-			System.out.println("**** Find by Email");
-			for (Customer c : findByEmail(ginnyEmail)) {
-				System.out.println(c);
-			}
-			System.out.println("**** Find by LastName");
-			for (Customer c : findByLastName("Weasley")) {
-				System.out.println(c);
-			}
-			System.out.println("**** Deleting Draco");
-			Customer draco = findById(stmt, 15L);
-			deleteCustomer(draco);
-			System.out.println("**** All customers");
+			findAllStatement = conn.prepareStatement("SELECT * FROM customer");
 
-			findAll(stmt, customers);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			try {
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
-
-		System.out.println("Found Customers: ");
-		for (Customer c : customers) {
-			System.out.println(c);
+	}
+	
+	@Override
+	public Customer findById(Long customerId) {
+		try {
+			findByIdStatement.setLong(1, customerId);
+			ResultSet rs = findByIdStatement.executeQuery();
+			if (rs.next()) {
+				return rowToCustomer(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-
+		return null;
 	}
 
-	public static void findAll(Statement stmt, List<Customer> customers) throws SQLException {
-		ResultSet rs = stmt.executeQuery("SELECT * FROM customer");
-		while (rs.next()) {
-			Customer c = rowToCustomer(rs);
-			customers.add(c);
+	@Override
+	public List<Customer> findAll() {
+		List<Customer> customers = new Vector<>();
+		try {
+			ResultSet rs = findAllStatement.executeQuery();
+			while (rs.next()) {
+				Customer c = rowToCustomer(rs);
+				customers.add(c);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		rs.close();
+		return customers;
 	}
 
-	public static List<Customer> findByEmail(String email) {
+	@Override
+	public List<Customer> findByEmail(String email) {
 		List<Customer> found = new Vector<>();
 		try {
 			findByEmailStatement.setString(1, email);
@@ -123,7 +89,8 @@ public class JDBCDemo {
 		return found;
 	}
 
-	public static List<Customer> findByLastName(String lastName) {
+	@Override
+	public List<Customer> findByLastName(String lastName) {
 		List<Customer> found = new Vector<>();
 		try {
 			findByLastNameStatement.setString(1, "%" + lastName + "%");
@@ -139,14 +106,6 @@ public class JDBCDemo {
 		return found;
 	}
 
-	public static Customer findById(Statement stmt, Long customerId) throws SQLException {
-		ResultSet rs = stmt.executeQuery("SELECT * FROM customer WHERE customerId = " + customerId);
-		if (rs.next()) {
-			return (rowToCustomer(rs));
-		}
-		return null;
-	}
-
 	private static Customer rowToCustomer(ResultSet rs) throws SQLException {
 		Long customerId = rs.getLong("customerId");
 		String firstName = rs.getString("firstName");
@@ -160,7 +119,8 @@ public class JDBCDemo {
 		return c;
 	}
 
-	public static void updateCustomer(Customer c) {
+	@Override
+	public Customer update(Customer c) {
 		try {
 			conn.setAutoCommit(true);
 			updateStatement.setString(1, c.getFirstName());
@@ -171,21 +131,27 @@ public class JDBCDemo {
 			int rows = updateStatement.executeUpdate();
 			System.out.println("Updated " + rows + " rows.");
 			conn.commit();
+			return c;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 
-	public static void deleteCustomer(Customer c) {
+	@Override
+	public Customer delete(Customer c) {
 		try {
 			deleteStatement.setLong(1, c.getCustomerId());
 			deleteStatement.executeUpdate();
+			return c;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 
-	public static Customer insertCustomer(Customer c) {
+	@Override
+	public Customer insert(Customer c) {
 		try {
 			insertStatement.setString(1, c.getFirstName());
 			insertStatement.setString(2, c.getLastName());
@@ -202,14 +168,14 @@ public class JDBCDemo {
 		}
 	}
 
-	public static void populateTable(List<Customer> imported) {
+	public void populateTable(List<Customer> imported) {
 		for (Customer importedCust : imported) {
-			insertCustomer(importedCust);
+			insert(importedCust);
 		}
 		System.out.println("Populated customer table.");
 	}
 
-	public static boolean dropTable(Statement stmt) {
+	public boolean dropTable(Statement stmt) {
 		try {
 			stmt.execute("DROP TABLE customer");
 			System.out.println("Dropped customer table.");
@@ -220,7 +186,7 @@ public class JDBCDemo {
 		}
 	}
 
-	public static boolean createTable(Statement stmt) {
+	public boolean createTable(Statement stmt) {
 		try {
 			stmt.execute("CREATE TABLE customer (" + "customerId INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,"
 					+ "firstName VARCHAR(24)," + "lastName VARCHAR(24)," + "phoneNumber VARCHAR(24),"

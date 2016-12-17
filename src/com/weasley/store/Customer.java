@@ -18,7 +18,7 @@ public class Customer extends java.lang.Object {
 
 	// Store or calculate on the fly?
 	private String fullName;
-	// WTF - deal with Security/Privacy issues
+	// WTF Fix - deal with Security/Privacy issues
 	/**
 	 * Social Security # or FEIN (Federal Employee Identification Number)
 	 */
